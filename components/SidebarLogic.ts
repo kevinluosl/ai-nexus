@@ -23,7 +23,7 @@ export interface SidebarItemData {
   /** 
    * 图标名称映射字符串，用于在 UI 组件中动态加载 Lucide 图标 
    */
-  iconName: 'LayoutDashboard' | 'Hand';
+  iconName: 'LayoutDashboard' | 'Hand' | 'ScanEye';
 }
 
 /**
@@ -43,5 +43,11 @@ export const SIDEBAR_MENU_ITEMS: SidebarItemData[] = [
     label: '手部跟踪',
     iconName: 'Hand',
     description: '像素大作战'
+  },
+  {
+    id: DemoId.YOLO_TEST,
+    label: 'YOLO 检测',
+    iconName: 'ScanEye',
+    description: '图像目标识别'
   },
 ];

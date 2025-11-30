@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { HandTracking } from './components/handtracking/HandTracking';
+import { YoloTest } from './components/yolo/YoloTest';
 import { Dashboard } from './components/Dashboard';
 import { DemoId } from './types';
 
@@ -32,6 +33,7 @@ const App: React.FC = () => {
         {/* Dynamic Content */}
         <div className="relative z-10 h-full w-full">
           {activeDemo === DemoId.HAND_TRACKING && <HandTracking />}
+          {activeDemo === DemoId.YOLO_TEST && <YoloTest />}
           {activeDemo === DemoId.DASHBOARD && <Dashboard onNavigate={setActiveDemo} />}
         </div>
       </main>
