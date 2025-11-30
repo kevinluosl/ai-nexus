@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Loader2, Camera, AlertTriangle, Play, RefreshCw, Trophy, Bomb, Skull, Crown, X, Hand } from 'lucide-react';
+import { Loader2, Camera, AlertTriangle, Play, RefreshCw, Trophy, Bomb, Skull, Crown, X, Hand, Info } from 'lucide-react';
 import { useHandTracking } from './HandTrackingLogic';
 
+/**
+ * 手部跟踪 Demo 主界面组件
+ * 包含游戏 Canvas、HUD (抬头显示)、模态框及状态控制逻辑。
+ */
 export const HandTracking: React.FC = () => {
+  // 从自定义 Hook 中解构游戏逻辑和状态
   const {
     videoRef,
     canvasRef,
@@ -14,16 +19,22 @@ export const HandTracking: React.FC = () => {
     resetToStandby,
     score,
     level,
+    bombsRemaining,
     gameStatus,
     submitScore,
     leaderboard,
-    levelUpMsg
+    levelUpMsg,
+    showTutorialToast
   } = useHandTracking();
 
-  const [playerName, setPlayerName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  // 本地 UI 状态
+  const [playerName, setPlayerName] = useState(''); // 玩家输入的名字
+  const [isSubmitting, setIsSubmitting] = useState(false); // 提交分数 loading 状态
+  const [showLeaderboard, setShowLeaderboard] = useState(false); // 排行榜弹窗开关
 
+  /**
+   * 处理分数提交表单
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!playerName.trim()) return;
@@ -31,12 +42,12 @@ export const HandTracking: React.FC = () => {
     await submitScore(playerName);
     setIsSubmitting(false);
     setPlayerName(''); 
-    resetToStandby(); // 保存后回到待机画面
+    resetToStandby(); // 保存成功后回到待机画面
   };
 
   return (
     <div className="h-full w-full flex flex-col p-6 overflow-hidden relative">
-      {/* Header */}
+      {/* --- 顶部 Header --- */}
       <div className="mb-6 flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
@@ -44,10 +55,11 @@ export const HandTracking: React.FC = () => {
             手部跟踪 - 像素大作战
           </h2>
           <p className="text-zinc-400 text-sm md:text-base">
-            双指/三指抓取(落地后重置) | 五指捏合投掷炸弹 | 阻止小人通过屏幕！
+            双指/三指抓取小人 | 五指捏合投掷炸弹 | 阻止小人通过屏幕！
           </p>
         </div>
         
+        {/* 顶部按钮区 */}
         <div className="flex gap-3">
           <button 
              onClick={() => setShowLeaderboard(true)}
@@ -59,11 +71,11 @@ export const HandTracking: React.FC = () => {
         </div>
       </div>
 
+      {/* --- 游戏主区域 --- */}
       <div className="flex-1 bg-black/40 rounded-2xl border border-zinc-800 overflow-hidden relative shadow-2xl backdrop-blur-sm flex">
         
-        {/* Main Game Area */}
         <div className="relative flex-1 h-full bg-black overflow-hidden">
-          {/* Loading */}
+          {/* Loading 状态 */}
           {!isModelLoaded && !error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-cyan-500 z-50 bg-zinc-950/80">
               <Loader2 size={48} className="animate-spin mb-4" />
@@ -71,7 +83,7 @@ export const HandTracking: React.FC = () => {
             </div>
           )}
 
-          {/* Error */}
+          {/* 错误提示 */}
           {error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-red-500 z-50 bg-zinc-950/90 p-8 text-center">
               <AlertTriangle size={48} className="mb-4" />
@@ -80,12 +92,13 @@ export const HandTracking: React.FC = () => {
             </div>
           )}
 
-          {/* CENTER OVERLAY: Start Buttons */}
+          {/* --- 中央交互层: 开始按钮 --- */}
+          {/* 仅在非游戏进行中且无错误时显示 */}
           {isModelLoaded && !error && gameStatus !== 'PLAYING' && gameStatus !== 'GAME_OVER' && gameStatus !== 'LEVEL_UP' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center z-40 pointer-events-none">
                 <div className="pointer-events-auto">
                     {!cameraActive ? (
-                        // 初始状态：开启摄像头
+                        // 初始状态：开启摄像头按钮
                         <button 
                           onClick={startCamera}
                           className="group relative px-8 py-6 bg-zinc-900/90 hover:bg-cyan-950/90 text-cyan-400 border border-cyan-500/30 rounded-2xl shadow-[0_0_30px_rgba(6,182,212,0.2)] transition-all hover:scale-105 flex flex-col items-center gap-3 backdrop-blur-md"
@@ -95,7 +108,7 @@ export const HandTracking: React.FC = () => {
                            <span className="text-xs text-zinc-500">允许访问摄像头以进行动作捕捉</span>
                         </button>
                     ) : (
-                        // 待机状态：开始游戏
+                        // 待机状态：开始游戏按钮 (支持捏合触发)
                         <button 
                           onClick={startGame}
                           className="group relative px-12 py-8 bg-cyan-600/90 hover:bg-cyan-500/90 text-white rounded-3xl shadow-[0_0_40px_rgba(34,211,238,0.4)] transition-all hover:scale-110 flex flex-col items-center gap-4 backdrop-blur-sm animate-in zoom-in duration-300"
@@ -105,15 +118,41 @@ export const HandTracking: React.FC = () => {
                            </div>
                            <div className="text-center">
                              <span className="block text-3xl font-black italic tracking-tighter shadow-black drop-shadow-lg">开始挑战</span>
-                             <span className="text-sm text-cyan-100/80 font-mono mt-1">Ready Player One</span>
+                             <div className="flex items-center justify-center gap-2 text-cyan-100/90 font-mono mt-2 text-sm bg-black/20 px-3 py-1 rounded-full">
+                                <Hand size={16} />
+                                <span>捏合或点击开始</span>
+                             </div>
                            </div>
                         </button>
                     )}
                 </div>
             </div>
           )}
+          
+          {/* --- 临时教程 Toast 提示 --- */}
+          {/* 首次游戏时短暂显示的操作指引 */}
+          {showTutorialToast && (
+             <div className="absolute top-10 left-0 right-0 z-50 flex justify-center pointer-events-none animate-in slide-in-from-top-4 fade-in duration-500">
+                <div className="bg-black/70 backdrop-blur-md border border-cyan-500/30 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <Hand size={20} className="text-cyan-400" />
+                        <span className="font-bold text-sm">双指抓取小人</span>
+                    </div>
+                    <div className="w-[1px] h-4 bg-zinc-600"></div>
+                    <div className="flex items-center gap-2">
+                        <Bomb size={20} className="text-red-400" />
+                        <span className="font-bold text-sm">五指炸弹 (限5颗)</span>
+                    </div>
+                    <div className="w-[1px] h-4 bg-zinc-600"></div>
+                    <div className="flex items-center gap-2">
+                        <Skull size={20} className="text-yellow-400" />
+                        <span className="font-bold text-sm">阻止小人通过</span>
+                    </div>
+                </div>
+             </div>
+          )}
 
-          {/* LEVEL UP OVERLAY */}
+          {/* --- 升级全屏提示动画 --- */}
           {gameStatus === 'LEVEL_UP' && (
             <div className="absolute inset-0 z-50 flex flex-col items-center justify-center pointer-events-none">
                 <div className="animate-in zoom-in spin-in-3 duration-500">
@@ -127,7 +166,7 @@ export const HandTracking: React.FC = () => {
             </div>
           )}
 
-          {/* Leaderboard Modal (Floating) */}
+          {/* --- 排行榜悬浮窗 --- */}
           {showLeaderboard && (
              <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
                 <div className="w-full max-w-md bg-zinc-900/95 border border-zinc-700 rounded-2xl shadow-2xl flex flex-col overflow-hidden m-4">
@@ -152,6 +191,7 @@ export const HandTracking: React.FC = () => {
                           {leaderboard.map((record, i) => (
                             <div key={i} className={`p-4 rounded-xl border flex items-center justify-between transition-transform hover:scale-[1.01] ${i===0 ? 'bg-gradient-to-r from-yellow-900/20 to-zinc-900 border-yellow-500/30 shadow-lg' : 'bg-zinc-800/40 border-zinc-800'}`}>
                                 <div className="flex items-center gap-4">
+                                  {/* 排名徽章 */}
                                   <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black font-mono ${i===0?'bg-yellow-500 text-black':'bg-zinc-700 text-zinc-400'}`}>
                                     {i+1}
                                   </div>
@@ -175,7 +215,7 @@ export const HandTracking: React.FC = () => {
              </div>
           )}
 
-          {/* Game Over Modal */}
+          {/* --- 游戏结束结算弹窗 --- */}
           {gameStatus === 'GAME_OVER' && (
              <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md">
                <div className="bg-zinc-900 border border-zinc-700 p-8 rounded-2xl shadow-2xl max-w-md w-full text-center">
@@ -227,23 +267,27 @@ export const HandTracking: React.FC = () => {
              </div>
           )}
 
-          {/* Video & Canvas */}
+          {/* --- 游戏渲染层 (Video + Canvas) --- */}
           <div className="relative w-full h-full flex items-center justify-center">
+             {/* 摄像头画面 (镜像翻转) */}
              <video
                ref={videoRef}
                className="absolute w-auto h-full max-w-full object-contain"
                autoPlay playsInline muted
                style={{ transform: 'scaleX(-1)' }} 
              />
+             {/* 游戏内容绘制层 */}
              <canvas
                ref={canvasRef}
                className="absolute w-auto h-full max-w-full object-contain z-10 pointer-events-none"
              />
              
-             {/* HUD - Only Show in Playing Mode or Level Up */}
+             {/* --- HUD (抬头显示) --- */}
+             {/* 仅在游戏进行或升级时显示 */}
              {(gameStatus === 'PLAYING' || gameStatus === 'LEVEL_UP') && (
                <>
                   <div className="absolute top-6 left-6 z-30 flex flex-col gap-2">
+                    {/* 分数显示 */}
                     <div className="bg-zinc-900/80 backdrop-blur-md border border-yellow-500/30 p-4 rounded-xl flex items-center gap-4 shadow-lg shadow-yellow-500/10">
                       <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400">
                         <Trophy size={20} />
@@ -254,13 +298,25 @@ export const HandTracking: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="bg-zinc-900/80 backdrop-blur-md border border-cyan-500/30 p-2 px-4 rounded-xl flex items-center gap-3">
-                       <span className="text-cyan-400 font-bold text-xl font-mono">Lv.{level}</span>
-                       <div className="h-4 w-[1px] bg-zinc-700"></div>
-                       <span className="text-xs text-zinc-400">每关10分晋级</span>
+                    <div className="flex gap-2">
+                        {/* 关卡显示 */}
+                        <div className="bg-zinc-900/80 backdrop-blur-md border border-cyan-500/30 p-2 px-4 rounded-xl flex items-center gap-3">
+                        <span className="text-cyan-400 font-bold text-xl font-mono">Lv.{level}</span>
+                        <div className="h-4 w-[1px] bg-zinc-700"></div>
+                        <span className="text-xs text-zinc-400">每关10分</span>
+                        </div>
+                        
+                        {/* 炸弹数量 HUD */}
+                        <div className={`bg-zinc-900/80 backdrop-blur-md border ${bombsRemaining > 0 ? 'border-red-500/30' : 'border-zinc-700'} p-2 px-4 rounded-xl flex items-center gap-3`}>
+                            <Bomb size={20} className={bombsRemaining > 0 ? "text-red-500 fill-red-500/20" : "text-zinc-600"} />
+                            <span className={`font-bold text-xl font-mono ${bombsRemaining > 0 ? "text-red-400" : "text-zinc-600"}`}>
+                                x{bombsRemaining}
+                            </span>
+                        </div>
                     </div>
                   </div>
 
+                  {/* 右上角状态与控制 */}
                   <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
                     <div className="bg-black/50 backdrop-blur text-green-400 border border-green-500/30 px-3 py-1 rounded text-xs font-mono flex items-center gap-2">
                       <Play size={10} className="fill-green-400" />
@@ -277,7 +333,7 @@ export const HandTracking: React.FC = () => {
                </>
              )}
              
-             {/* Decorative UI / Instructions */}
+             {/* 底部操作提示 */}
              {gameStatus === 'PLAYING' && (
                 <div className="absolute bottom-6 left-6 z-20 opacity-50">
                   <div className="flex items-center gap-2 text-zinc-400 text-xs font-mono bg-black/40 p-2 rounded">
