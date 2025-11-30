@@ -471,7 +471,7 @@ export const useHandTracking = () => {
     }
     game.bombs = activeBombs;
 
-    // --- 抓取目标判定逻辑 ---
+    // --- 抓取目标判定逻辑 (V3 磁吸算法) ---
     if (!isLevelUp && game.grabbedCharId === -1 && game.isPinching && pinchPoint) {
         let minDist = Infinity;
         let foundId = -1;
@@ -485,6 +485,7 @@ export const useHandTracking = () => {
             const dy = pinchPoint.y - char.y;
             const dist = Math.hypot(dx, dy); 
             
+            // 磁吸半径 120px
             if (dist < GRAB_MAGNET_RADIUS) {
                 if (dist < minDist) {
                     minDist = dist;
@@ -509,7 +510,7 @@ export const useHandTracking = () => {
         const char = game.characters.find(c => c.id === game.grabbedCharId);
         if (char) {
             char.state = 'FALLING';
-            // 松手时恢复水平速度，但不要立即太快
+            // 松手时恢复水平速度
             char.vx = char.originalSpeed; 
             char.vy = 0;
         }
@@ -522,8 +523,9 @@ export const useHandTracking = () => {
 
         // 1. 被抓取状态
         if (char.id === game.grabbedCharId && pinchPoint && !isLevelUp) {
-            char.x += (pinchPoint.x - char.x) * 0.5;
-            char.y += (pinchPoint.y - char.y) * 0.5;
+            // 强力吸附 Lerp
+            char.x += (pinchPoint.x - char.x) * 0.6;
+            char.y += (pinchPoint.y - char.y) * 0.6;
             char.vy = 0;
             char.legFrame += 0.25 * dt; 
         } 

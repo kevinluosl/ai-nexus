@@ -7,6 +7,14 @@ interface DashboardProps {
   onNavigate: (id: DemoId) => void;
 }
 
+// Static mapping for Tailwind classes to ensure they are detected by the scanner/CDN
+const COLOR_VARIANTS: Record<string, string> = {
+  blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  cyan: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+  amber: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+};
+
 /**
  * 首页组件 (视图层)
  * 展示欢迎信息和 Demo 入口卡片
@@ -80,14 +88,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
              <h4 className="text-zinc-500 text-xs font-mono uppercase mb-4">技术架构 (Tech Stack)</h4>
              <div className="flex flex-wrap gap-2">
                 {techStack.map((tech, index) => {
-                  // Tailwind dynamic classes hack: explicitly listing colors might be needed if they weren't used before, 
-                  // but standard colors like blue/cyan/amber/purple are safe.
-                  let bgClass = `bg-${tech.color}-500/10`;
-                  let textClass = `text-${tech.color}-400`;
-                  let borderClass = `border-${tech.color}-500/20`;
-                  
+                  const colorClass = COLOR_VARIANTS[tech.color] || 'bg-zinc-800 text-zinc-400 border-zinc-700';
                   return (
-                    <span key={index} className={`px-3 py-1 rounded-full ${bgClass} ${textClass} border ${borderClass} text-xs font-mono`}>
+                    <span key={index} className={`px-3 py-1 rounded-full border text-xs font-mono ${colorClass}`}>
                       {tech.label}
                     </span>
                   );
