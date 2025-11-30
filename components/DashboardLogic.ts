@@ -33,6 +33,13 @@ export const DASHBOARD_CONTENT = {
       isPlaceholder: false // 标记为可用状态
     },
     {
+      id: DemoId.YOLO_TEST,
+      title: 'YOLO 目标检测',
+      description: '上传图片使用 YOLOv8 模型进行实时目标识别，支持多目标分类与置信度分析。',
+      iconType: 'ScanEye',
+      isPlaceholder: false // 标记为可用状态
+    },
+    {
       id: 'LLM_PLACEHOLDER',
       title: '生成式 LLM',
       description: '基于 Gemini 2.5 Flash 的自然语言处理与生成能力展示。',
@@ -50,6 +57,8 @@ export const DASHBOARD_CONTENT = {
     { label: 'React 19', color: 'blue' },
     { label: 'Tailwind CSS', color: 'cyan' },
     { label: 'MediaPipe / TensorFlow', color: 'amber' },
-    { label: 'WebGL', color: 'purple' }
+    { label: 'WebGL', color: 'purple' },
+    { label: 'Python / Flask', color: 'blue' },
+    { label: 'YOLOv8', color: 'amber' }
   ]
 };

@@ -13,6 +13,14 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        cors: true, // Enable CORS for the dev server
+        proxy: {
+          '/api': {
+            target: 'http://127.0.0.1:5000', // Use 127.0.0.1 instead of localhost for better IPv4 compatibility
+            changeOrigin: true,
+            secure: false,
+          }
+        }
       },
       plugins: [
         react(),

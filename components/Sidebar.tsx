@@ -1,6 +1,6 @@
 import React from 'react';
 import { DemoId } from '../types';
-import { Hand, LayoutDashboard, Cpu, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Hand, LayoutDashboard, Cpu, ChevronLeft, ChevronRight, ScanEye } from 'lucide-react';
 import { SIDEBAR_MENU_ITEMS, SidebarItemData } from './SidebarLogic';
 
 /**
@@ -31,6 +31,7 @@ const IconRenderer: React.FC<{ name: SidebarItemData['iconName']; size?: number 
   switch (name) {
     case 'LayoutDashboard': return <LayoutDashboard size={size} />;
     case 'Hand': return <Hand size={size} />;
+    case 'ScanEye': return <ScanEye size={size} />;
     default: return null;
   }
 };
