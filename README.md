@@ -30,6 +30,8 @@
 
 基于 MediaPipe 的高性能手部骨骼检测 Demo，完全在客户端运行，利用 WebAssembly 和 GPU 加速实现实时交互。
 
+<img src="images/hand.png" alt="Hand Tracking Demo" width="600"/>
+
 **功能特性：**
 - 🤲 实时手部 21 个关键点检测
 - ⚡ WebAssembly + GPU 加速
