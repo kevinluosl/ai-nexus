@@ -30,7 +30,7 @@
 
 基于 MediaPipe 的高性能手部骨骼检测 Demo，完全在客户端运行，利用 WebAssembly 和 GPU 加速实现实时交互。
 
-<img src="images/hand.png" alt="Hand Tracking Demo" width="600"/>
+<img src="images/hand.jpg" alt="Hand Tracking Demo" width="600"/>
 
 **功能特性：**
 - 🤲 实时手部 21 个关键点检测
@@ -94,21 +94,14 @@
    npm install
    ```
 
-3. **配置环境变量**
-   
-   在项目根目录创建 `.env.local` 文件，设置 `GEMINI_API_KEY`（如果需要使用 Gemini API）：
-   ```env
-   GEMINI_API_KEY=your_api_key_here
-   ```
-
-4. **运行前端项目**
+3. **运行前端项目**
    ```bash
    npm run dev
    ```
    
    访问 `https://localhost:3000`（Vite 会自动配置 HTTPS）
 
-5. **运行 YOLO 后端服务**（可选，仅 YOLO Demo 需要）
+4. **运行 YOLO 后端服务**（可选，仅 YOLO Demo 需要）
    
    进入 `yolo` 目录，参考其中的 README 配置并运行后端服务。
 

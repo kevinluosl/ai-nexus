@@ -30,7 +30,7 @@ We will continuously update AI programming demos combined with open-source proje
 
 A high-performance hand skeleton detection demo based on MediaPipe, running entirely on the client side, utilizing WebAssembly and GPU acceleration for real-time interaction.
 
-<img src="images/hand.png" alt="Hand Tracking Demo" width="600"/>
+<img src="images/hand.jpg" alt="Hand Tracking Demo" width="600"/>
 
 **Features:**
 - 🤲 Real-time detection of 21 hand keypoints
