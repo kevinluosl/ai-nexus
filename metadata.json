@@ -1,0 +1,7 @@
+{
+  "name": "AI Nexus - Glint LABS",
+  "description": "A high-tech showcase of AI capabilities. 浏览器端人工智能前沿技术展示。",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
