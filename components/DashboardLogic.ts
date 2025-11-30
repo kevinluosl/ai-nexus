@@ -35,7 +35,7 @@ export const DASHBOARD_CONTENT = {
     {
       id: DemoId.YOLO_TEST,
       title: 'YOLO 目标检测',
-      description: '上传图片使用 YOLOv8 模型进行实时目标识别，支持多目标分类与置信度分析。',
+      description: '上传图片使用 YOLOv11 模型进行实时目标识别，支持多目标分类与置信度分析。',
       iconType: 'ScanEye',
       isPlaceholder: false // 标记为可用状态
     },
