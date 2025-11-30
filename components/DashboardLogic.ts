@@ -9,7 +9,7 @@ export const DASHBOARD_CONTENT = {
     titlePrefix: 'AI',
     titleGradient: '编程能力展示',
     titleSuffix: '及开源项目探索',
-    description: '探索浏览器端人工智能的前沿技术。本平台旨在集合各种 Demo，展示实时计算机视觉、生成式模型以及相关开源项目在 Web 环境下的无限可能性。'
+    description: '探索浏览器端人工智能的前沿技术。本平台旨在创造各种 Demo，展示实时计算机视觉、生成式模型以及相关开源项目在 Web 环境下的无限可能性。'
   },
   sectionTitle: '推荐 Demo',
   cards: [
